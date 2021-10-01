@@ -1,6 +1,7 @@
 #include "main.h"
 
 
+bool adfgx_menu();
 bool affine_attack();
 bool affine_menu();
 void frequency_menu();
@@ -39,7 +40,8 @@ int main() {
                 break;
 
             case 6: // ADFGX Cipher
-                printf("ADFGX Cipher\n");
+                if ( !adfgx_menu() )
+                    fputs("Bad input: returning to main menu...\n", stdout);
                 break;
 
             case 7: // ???
@@ -54,6 +56,38 @@ int main() {
     }
 
     return 0;
+}
+
+
+bool adfgx_menu() {
+    string text;
+    string key;
+    int option;
+
+    fputs("Enter the key: ", stdout);
+    cin.clear(); cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    getline(cin, key);
+    key = to_alphabet(toupper(key), ALPHABET);
+
+    fputs("Enter the text: ", stdout);
+    // cin.clear(); cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    getline(cin, text);
+    text = to_alphabet(toupper(text), ALPHABET);
+
+    fputs("1) encode\n2) decode\n>", stdout);
+    if ( cin >> option ) {
+        if ( option == 1 )
+            printf("\"%s\" -> \"%s\"\n", text.c_str(), adfgx_E(key, text).c_str());
+
+        else if ( option == 2 )
+            printf("\"%s\" -> \"%s\"\n", text.c_str(), adfgx_D(key, text).c_str());
+
+        else
+            return false;
+    } else
+        return false;
+
+    return true;
 }
 
 

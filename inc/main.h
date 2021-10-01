@@ -8,6 +8,7 @@
 #include <vector>
 #include <deque>
 #include "utility.h"
+#include "adfgxcipher.h"
 #include "affinecipher.h"
 #include "vigenerecipher.h"
 
