@@ -1,12 +1,14 @@
 #ifndef __AFFINECIPHER__H__
 #define __AFFINECIPHER__H__
 
-#include <string>
+#include "utility.h"
+#include "cryptomath.h"
 
 using std::string;
 
 
-string affine(int a, int b, string text);
+string affine_D(int a, int b, const string& text, Int n=26);
+string affine_E(int a, int b, const string& text, Int n=26);
 
 
 #endif//__AFFINECIPHER__H__
