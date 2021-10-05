@@ -72,15 +72,19 @@ bool adfgx_menu() {
     fputs("Enter the text: ", stdout);
     // cin.clear(); cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     getline(cin, text);
-    text = to_alphabet(toupper(text), ALPHABET);
+    text = toupper(text);
 
     fputs("1) encode\n2) decode\n>", stdout);
     if ( cin >> option ) {
-        if ( option == 1 )
+        if ( option == 1 ) {
+            text = to_alphabet(text, ALPHABET);
             printf("\"%s\" -> \"%s\"\n", text.c_str(), adfgx_E(key, text).c_str());
+        }
 
-        else if ( option == 2 )
+        else if ( option == 2 ) {
+            text = to_alphabet(text, string(ALPHABET) + ' ');
             printf("\"%s\" -> \"%s\"\n", text.c_str(), adfgx_D(key, text).c_str());
+        }
 
         else
             return false;
