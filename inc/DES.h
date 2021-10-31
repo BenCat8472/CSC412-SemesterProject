@@ -8,14 +8,14 @@
 using std::vector;
 
 typedef uint8_t byte;
-enum Sbox_t { Sbox1, Sbox2, Sbox3, Sbox4, Sbox5, Sbox6, Sbox7, Sbox8 };
+enum class Sbox { Sbox1, Sbox2, Sbox3, Sbox4, Sbox5, Sbox6, Sbox7, Sbox8 };
 
 
 uint64_t DES(uint64_t msg, uint64_t key);
 uint64_t expand(uint32_t r);
 uint32_t f(uint32_t r, uint64_t key);
 vector<uint64_t> gen_keys(uint64_t key);
-uint8_t index_s_box(Sbox_t sbox, byte b);
+uint8_t index_s_box(Sbox sbox, byte b);
 
 
 template<typename T>

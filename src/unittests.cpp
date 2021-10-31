@@ -217,14 +217,14 @@ TEST_CASE("Full 64-bit DES") {
         CHECK(SBOX1[0b00][0b0000] == 14);
         CHECK(SBOX1[0b11][0b1111] == 13);
 
-        CHECK(index_s_box(Sbox1, 0b000000) == 14);
-        CHECK(index_s_box(Sbox1, 0b111111) == 13);
+        CHECK(index_s_box(Sbox::Sbox1, 0b000000) == 14);
+        CHECK(index_s_box(Sbox::Sbox1, 0b111111) == 13);
 
         bool success = true;
         for ( unsigned i = 0; i < 4; ++i ) {
             for ( unsigned j = 0; j < 16; ++j ) {
                 uint8_t byte = ((i & 0b10) << 4) | (j << 1) | (i & 0b1);
-                if ( index_s_box(Sbox6, byte) != SBOX6[i][j] )
+                if ( index_s_box(Sbox::Sbox6, byte) != SBOX6[i][j] )
                     success = false;
             }
         }

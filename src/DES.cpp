@@ -45,7 +45,7 @@ uint32_t f(uint32_t r, uint64_t key) {
     for ( unsigned i = 0; i < 8; ++i ) {
         // extract leading 6-bits, next 6-bits, etc.
         byte x = (bs >> (6 * (7 - i))) & (uint64_t)0b111111;
-        c |= static_cast<uint32_t>(index_s_box((Sbox_t)i, x)) << (4 * (7 - i));
+        c |= static_cast<uint32_t>(index_s_box((Sbox)i, x)) << (4 * (7 - i));
     }
 
     return permute(c, C_TABLE);
@@ -79,17 +79,20 @@ vector<uint64_t> gen_keys(uint64_t key) {
 }
 
 
-uint8_t index_s_box(Sbox_t sbox, byte b) {
+uint8_t index_s_box(Sbox sbox, byte b) {
     unsigned i = ((b & 0b100000) >> 4) | (b & 0b1);
     unsigned j =  (b & 0b011110) >> 1;
     switch( sbox ) {
-        case Sbox1: return SBOX1[i][j];
-        case Sbox2: return SBOX2[i][j];
-        case Sbox3: return SBOX3[i][j];
-        case Sbox4: return SBOX4[i][j];
-        case Sbox5: return SBOX5[i][j];
-        case Sbox6: return SBOX6[i][j];
-        case Sbox7: return SBOX7[i][j];
-        case Sbox8: return SBOX8[i][j];
+        case Sbox::Sbox1: return SBOX1[i][j];
+        case Sbox::Sbox2: return SBOX2[i][j];
+        case Sbox::Sbox3: return SBOX3[i][j];
+        case Sbox::Sbox4: return SBOX4[i][j];
+        case Sbox::Sbox5: return SBOX5[i][j];
+        case Sbox::Sbox6: return SBOX6[i][j];
+        case Sbox::Sbox7: return SBOX7[i][j];
+        case Sbox::Sbox8: return SBOX8[i][j];
+        default:
+            LOG("Error: sbox value is out of range! (incorrect cast?)\n");
+            return 0; // keeps the compiler quiet
     }
 }
