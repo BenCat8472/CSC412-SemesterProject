@@ -88,6 +88,7 @@ TEST_CASE("Vigenère Cipher") {
 /******************************************************************************/
 #include "simpleDES.h"
 #include "DES.h"
+#include "threerounds.h"
 
 
 TEST_CASE("Simplified DES-type Algorithm") {
@@ -260,4 +261,32 @@ TEST_CASE("Full 64-bit DES") {
             CHECK(DES(msg, key) == res);
         }
     }
+}
+
+
+TEST_CASE("Three Rounds Attack") {
+    SECTION("Example") {
+        uint16_t key = 0b01001101; // 0b001001101;
+        uint16_t m1 = 0b000111011011;
+        uint16_t m2 = 0b101110011011;
+        uint16_t c1 = 0b000011100101;
+        uint16_t c2 = 0b100100011000;
+
+        auto k4s = three_rounds(m1, c1, m2, c2);
+
+        CHECK(k4s.first.find(0b1001) != k4s.first.end());
+        CHECK(k4s.first.find(0b0011) != k4s.first.end());
+        CHECK(k4s.second.find(0b1111) != k4s.second.end());
+        CHECK(k4s.second.find(0b0100) != k4s.second.end());
+    }
+
+    // SECTION("Random Test") {
+    //     uint16_t key = rand() % (0b1 << 9);
+    //     uint16_t m1 = rand() % (0b1 << 12);
+    //     uint16_t m2 = (rand() & 0b111111000000) | (m1 & 0b111111);
+    //     uint16_t c1 = simpleDES(m1, key, 3);
+    //     uint16_t c2 = simpleDES(m2, key, 3);
+    //
+    //     three_rounds(m1, c1, m2, c2);
+    // }
 }

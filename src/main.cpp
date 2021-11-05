@@ -35,6 +35,7 @@ bool menu2() {
     if ( !init ) {
         menu.add("Simple DES", simple_DES_menu);
         menu.add("Full DES", full_DES_menu);
+        menu.add("Three Rounds Attack", three_rounds_menu);
     }
 
     return menu.run();
