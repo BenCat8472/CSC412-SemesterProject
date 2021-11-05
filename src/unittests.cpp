@@ -22,7 +22,6 @@ TEST_CASE("cryptomath.h") {
     }
 
     SECTION("extendedgcd") {
-        printf("\nextendedgcd tests:-\n");
         Int a = 12345, b = 11111;
         Int x = a, y = b;
         Int d = extendedgcd(x, y);
