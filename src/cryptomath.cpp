@@ -1,90 +1,51 @@
 #include "cryptomath.h"
 
 
-void gcd_shift(Int& a, Int& b, Int q);  // helper func for extendedgcd
-
-
-// returns gcd(a, b) and modifies a and b to be x and y s.t. x*a + y*b = 1
-Int extendedgcd(Int& a, Int& b) {
-    Int x = 1, y = 0;
-    Int next_x = 0, next_y = 1;
-
-    while ( b != 0 ) {
-        LOG("x=% d, y=% d\n", x, y);
-
-        Int quotient = a / b;
-        gcd_shift(x, next_x, quotient);
-        gcd_shift(y, next_y, quotient);
-
-        a = a % b;
-        swap(a, b);
+bool is_prime(BigInt n) {
+    BigInt r(0);
+    BigInt d(n - 1);
+    while ( d % 2 == 0 ) {
+        d /= 2;
+        ++r;
     }
-    LOG("x=% d, y=% d\n", x, y);
-
-    Int gcd_ab = a;
-    a = x;
-    b = y;
-    return gcd_ab;
+    return miller_rabin(n, r, d);
 }
 
 
-Int findModInverse(Int a, Int n) {
-    Int x = a, y = n;
-    #ifdef DEBUG
-        Int d = extendedgcd(x, y);
-        if ( d != 1 )
-            throw "'a' and 'n' are not relatively prime so a^-1 DNE!";
-    #else
-        extendedgcd(x, y);
-    #endif
-    while ( x < 0 )
-        x += n;
-    return x;
-}
-
-
-Int gcd(Int a, Int b) {
-    while ( b != 0 ) {
-        a = a % b;
-        swap(a, b);
-    }
-    return a;
-}
-
-
-void gcd_shift(Int& curr, Int& next, Int quot) {
-    Int temp = next;
-    next = curr - quot * next;
-    curr = temp;
-}
-
-
-// assumes 0 <= a < n
-bool is_prim_root(Int a, Int n) {
-    Int* field = new Int[n];
-    if ( field == nullptr )
-        throw "Memory allocation failed.";
-
-    for ( Int i = 0; i < n; i += 1 )
-        field[i] = i;
-
-    field[a] = 0;
-    for ( Int x = a * a % n; (x != a) && (x != 0); x = (x * a) % n )
-        field[x] = 0;
-
-    bool primitive = true;
-    for ( Int i = 0; i < n; i += 1 ) {
-        if ( field[i] != 0 )
-            primitive = false;
+bool miller_rabin(const BigInt& n, const BigInt& r, const BigInt& d) {
+    LOG("+miller_rabin(%ld, %ld, %ld)\n", NTL::conv<long>(n), NTL::conv<long>(r), NTL::conv<long>(d));
+    // Miller-Rabin test
+    if ( n < 1 ) {
+        LOG("-miller_rabin\n");
+        return false;
     }
 
-    delete[] field;
+    // calculate loop bounds
+    BigInt bounds(floor(2 * pow(log(n), 2)));
+    if ( bounds > n - 2 ) {
+        bounds = n - 2;
+    }
 
-    return primitive;
-}
+    LOG("Bounds: %ld\n", NTL::conv<long>(bounds));
+    for ( BigInt a, i(1); (a = get_nth_prime(i)) < bounds; ++i ) {
+        BigInt x = NTL::PowerMod(a, d, n);
 
+        LOG("a = %ld, x = %ld\n", NTL::conv<long>(a), NTL::conv<long>(x));
+        if ( (x == 1) || (x == -1) ) {
+            continue;
+        }
+        for ( BigInt j(0); j < r - 1; ++j ) {
+            x = NTL::SqrMod(x, n);
+            if ( x == n - 1 ) {
+                break;
+            }
+        }
+        if ( x != n - 1 ) {
+            LOG("-miller_rabin\n");
+            return false;
+        }
+    }
 
-// positive modulo
-Int mod(Int a, Int n) {
-    return ((a % n) + n) % n;
+    LOG("-miller_rabin\n");
+    return true;
 }

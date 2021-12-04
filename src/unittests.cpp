@@ -15,16 +15,16 @@ TEST_CASE("cryptomath.h") {
     char gcdfmt[] = "gcd(%d, %d) = %d\n";
 
     SECTION("gcd") {
-        Int a = 21, b = 14;
+        int a = 21, b = 14;
 
         CHECK(gcd(a, b) == 7);
         CHECK(gcd(a, b) == gcd(b, a));
     }
 
     SECTION("extendedgcd") {
-        Int a = 12345, b = 11111;
-        Int x = a, y = b;
-        Int d = extendedgcd(x, y);
+        int a = 12345, b = 11111;
+        int x = a, y = b;
+        int d = extendedgcd(x, y);
 
         CHECK(d == 1);
         CHECK(x == -2224);
@@ -33,8 +33,8 @@ TEST_CASE("cryptomath.h") {
     }
 
     SECTION("findModInverse") {
-        Int a = 3, n = 7;
-        Int ai = findModInverse(a, n);
+        int a = 3, n = 7;
+        int ai = findModInverse(a, n);
 
         CHECK(ai * a % n == 1);
     }
@@ -42,10 +42,12 @@ TEST_CASE("cryptomath.h") {
     SECTION("is_prim_root") {
         CHECK( is_prim_root(3, 7));
         CHECK(!is_prim_root(3, 9));
+        CHECK( is_prim_root(27, 101));
+        CHECK(!is_prim_root(13, 101));
     }
 
     SECTION("mod") {
-        Int a = -5, n = 7;
+        int a = -5, n = 7;
         CHECK(mod(a, n) == a + n);
         a = 5;
         CHECK(mod(a, n) == a % n);
@@ -54,7 +56,7 @@ TEST_CASE("cryptomath.h") {
 
 
 TEST_CASE("Affine cipher") {
-    Int a = 7, b = 2;
+    int a = 7, b = 2;
     string s = "THEQUICKBROWNFOXJUMPEDOVERTHELAZYDOG";
 
     SECTION("Section one") {
@@ -288,4 +290,25 @@ TEST_CASE("Three Rounds Attack") {
     //
     //     three_rounds(m1, c1, m2, c2);
     // }
+}
+
+
+TEST_CASE("prime generation") {
+    SECTION("prime") {
+        CHECK(get_nth_prime(   1) ==    2);
+        CHECK(get_nth_prime(  10) ==   29);
+        CHECK(get_nth_prime( 100) ==  541);
+        CHECK(get_nth_prime(1000) == 7919);
+    }
+
+    SECTION("is_prime") {
+        {
+            BigInt n(7477), r(2), d(1869);
+            CHECK(miller_rabin(n, r, d));
+        }
+        {
+            BigInt n(1025), r(10), d(1);
+            CHECK(!miller_rabin(n, r, d));
+        }
+    }
 }
