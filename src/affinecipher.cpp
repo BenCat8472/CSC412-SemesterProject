@@ -1,8 +1,8 @@
 #include "affinecipher.h"
 
 
-string affine_D(int a, int b, const string& text, Int n) {
-    Int ai = findModInverse(a, n);
+string affine_D(int a, int b, const string& text, int n) {
+    int ai = findModInverse(a, n);
     string out {};
 
     for (const char& c : text)
@@ -12,7 +12,7 @@ string affine_D(int a, int b, const string& text, Int n) {
 }
 
 
-string affine_E(int a, int b, const string& text, Int n) {
+string affine_E(int a, int b, const string& text, int n) {
     string out {};
 
     for (const char& c : text)

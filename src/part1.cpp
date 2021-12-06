@@ -59,13 +59,13 @@ bool affine_attack() {
     // a * p1 + b = c1; a * p2 + b = c2
     // a = (c1 - c2) * (p1 - p2)^-1
     // b = c1 - a * p1
-    Int x1 = ord(toupper(p1));
-    Int x2 = ord(toupper(p2));
-    Int y1 = ord(toupper(c1));
-    Int y2 = ord(toupper(c2));
+    int x1 = ord(toupper(p1));
+    int x2 = ord(toupper(p2));
+    int y1 = ord(toupper(c1));
+    int y2 = ord(toupper(c2));
 
-    Int a = mod((y1 - y2) * findModInverse(x1 - x2, 26), 26);
-    Int b = mod(y1 - a * x1, 26);
+    int a = mod((y1 - y2) * findModInverse(x1 - x2, 26), 26);
+    int b = mod(y1 - a * x1, 26);
 
     printf("The affine cipher is:\n\tE(mi) = %d * mi + %d (mod 26)\n", a, b);
 
@@ -76,7 +76,7 @@ bool affine_attack() {
 bool affine_menu() {
     string text;
     int option;
-    Int a, b;
+    int a, b;
 
     fputs("a=", stdout);
     if ( !( cin >> a ) )

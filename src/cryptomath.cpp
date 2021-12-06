@@ -1,90 +1,92 @@
 #include "cryptomath.h"
 
 
-void gcd_shift(Int& a, Int& b, Int q);  // helper func for extendedgcd
+unsigned long long get_nth_prime(unsigned long long n) {
+    static std::vector<unsigned long long> primes {
+        2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67
+    };
 
-
-// returns gcd(a, b) and modifies a and b to be x and y s.t. x*a + y*b = 1
-Int extendedgcd(Int& a, Int& b) {
-    Int x = 1, y = 0;
-    Int next_x = 0, next_y = 1;
-
-    while ( b != 0 ) {
-        LOG("x=% d, y=% d\n", x, y);
-
-        Int quotient = a / b;
-        gcd_shift(x, next_x, quotient);
-        gcd_shift(y, next_y, quotient);
-
-        a = a % b;
-        swap(a, b);
-    }
-    LOG("x=% d, y=% d\n", x, y);
-
-    Int gcd_ab = a;
-    a = x;
-    b = y;
-    return gcd_ab;
-}
-
-
-Int findModInverse(Int a, Int n) {
-    Int x = a, y = n;
-    #ifdef DEBUG
-        Int d = extendedgcd(x, y);
-        if ( d != 1 )
-            throw "'a' and 'n' are not relatively prime so a^-1 DNE!";
-    #else
-        extendedgcd(x, y);
-    #endif
-    while ( x < 0 )
-        x += n;
-    return x;
-}
-
-
-Int gcd(Int a, Int b) {
-    while ( b != 0 ) {
-        a = a % b;
-        swap(a, b);
-    }
-    return a;
-}
-
-
-void gcd_shift(Int& curr, Int& next, Int quot) {
-    Int temp = next;
-    next = curr - quot * next;
-    curr = temp;
-}
-
-
-// assumes 0 <= a < n
-bool is_prim_root(Int a, Int n) {
-    Int* field = new Int[n];
-    if ( field == nullptr )
-        throw "Memory allocation failed.";
-
-    for ( Int i = 0; i < n; i += 1 )
-        field[i] = i;
-
-    field[a] = 0;
-    for ( Int x = a * a % n; (x != a) && (x != 0); x = (x * a) % n )
-        field[x] = 0;
-
-    bool primitive = true;
-    for ( Int i = 0; i < n; i += 1 ) {
-        if ( field[i] != 0 )
-            primitive = false;
+    while ( n >= primes.size() ) {
+        for ( int x = primes.back() + 2; true; x += 2 ) {
+            auto it = primes.begin();
+            for (; it != primes.end() && (x % *it != 0); ++it );
+            if ( it == primes.end() ) {
+                primes.push_back(x);
+                break;
+            }
+        }
     }
 
-    delete[] field;
-
-    return primitive;
+    return primes[n - 1];
 }
 
 
-// positive modulo
-Int mod(Int a, Int n) {
-    return ((a % n) + n) % n;
+bool is_prime(const BigInt& n) {
+    return miller_rabin(n);
+}
+
+
+bool miller_rabin(const BigInt& n) {
+    if ( (n <= 1) || ((n % 2 == 0) && (n != 2)) ) {
+        return false;
+    }
+
+    BigInt r(0);
+    BigInt d(n - 1);
+    while ( d % 2 == 0 ) {
+        d >>= 1;
+        ++r;
+    }
+
+    return miller_rabin(n, r, d);
+}
+
+
+bool miller_rabin(const BigInt& n, const BigInt& r, const BigInt& d) {
+    LOG("+miller_rabin(%ld, %ld, %ld)\n", conv<long>(n), conv<long>(r), conv<long>(d));
+    if ( (n <= 1) || ((n % 2 == 0) && (n != 2)) ) {
+        LOG("-miller_rabin -> false\n");
+        return false;
+    }
+
+    // calculate loop bounds
+    BigInt bounds(floor(2 * pow(log(n), 2)));
+    if ( bounds > n - 2 ) {
+        bounds = n - 2;
+    }
+
+    LOG("Bounds: 2 <= a <= %ld, where a is prime.\n", conv<long>(bounds));
+    BigInt a;
+    for ( unsigned long long i = 1; (a = get_nth_prime(i)) <= bounds; ++i ) {
+        BigInt x = NTL::PowerMod(a, d, n);
+
+        if ( x != 1 ) {
+            for ( int j = 0; (x != n - 1) && (j < r - 1); ++j ) {
+                x = NTL::SqrMod(x, n);
+            }
+
+            if ( x != n - 1 ) {
+                LOG("Witness found: a = %ld\n", conv<long>(a));
+                LOG("-miller_rabin -> false\n");
+                return false;
+            }
+        }
+    }
+
+    LOG("-miller_rabin -> true\n");
+    return true;
+}
+
+
+BigInt random_prime(long b) {   // generates a prime in range [2^b - 1, 2^(b+1) - 1]
+    DTHROW_IF(b == 0, "b must be > 0!");
+    BigInt b0 = NTL::power(BigInt(2), b);
+
+    for (;;) {
+        BigInt r = b0 + NTL::RandomBnd(b0) - 1;
+        LOG("Checking, %ld, for primality...\n", conv<long>(r));
+        if ( miller_rabin(r) ) {
+            return r;
+        }
+    }
 }

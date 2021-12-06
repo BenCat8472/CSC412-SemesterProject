@@ -15,37 +15,69 @@ TEST_CASE("cryptomath.h") {
     char gcdfmt[] = "gcd(%d, %d) = %d\n";
 
     SECTION("gcd") {
-        Int a = 21, b = 14;
+        {
+            int a = 21, b = 14;
 
-        CHECK(gcd(a, b) == 7);
-        CHECK(gcd(a, b) == gcd(b, a));
+            CHECK(gcd(a, b) == 7);
+            CHECK(gcd(a, b) == gcd(b, a));
+        }
+        {
+            BigInt a(21), b(14);
+
+            CHECK(gcd(a, b) == 7);
+            CHECK(gcd(a, b) == gcd(b, a));
+        }
     }
 
     SECTION("extendedgcd") {
-        Int a = 12345, b = 11111;
-        Int x = a, y = b;
-        Int d = extendedgcd(x, y);
+        {
+            int a = 12345, b = 11111;
+            int x = a, y = b;
+            int d = extendedgcd(x, y);
 
-        CHECK(d == 1);
-        CHECK(x == -2224);
-        CHECK(y == 2471);
-        CHECK(x * a + y * b == d);
+            CHECK(d == 1);
+            CHECK(x == -2224);
+            CHECK(y == 2471);
+            CHECK(x * a + y * b == d);
+        }
+        {
+            BigInt a(12345), b(11111);
+            BigInt x = a, y = b;
+            BigInt d = extendedgcd(x, y);
+
+            CHECK(d == 1);
+            CHECK(x == -2224);
+            CHECK(y == 2471);
+            CHECK(x * a + y * b == d);
+        }
     }
 
     SECTION("findModInverse") {
-        Int a = 3, n = 7;
-        Int ai = findModInverse(a, n);
+        {
+            int a = 3, n = 7;
+            int ai = findModInverse(a, n);
 
-        CHECK(ai * a % n == 1);
+            CHECK(ai * a % n == 1);
+        }
+        {
+            BigInt a(3), n(7);
+            BigInt ai = findModInverse(a, n);
+
+            CHECK(ai * a % n == 1);
+        }
     }
 
     SECTION("is_prim_root") {
         CHECK( is_prim_root(3, 7));
         CHECK(!is_prim_root(3, 9));
+        CHECK( is_prim_root(27, 101));
+        CHECK(!is_prim_root(13, 101));
+        CHECK( is_prim_root(BigInt(27), BigInt(101)));
+        CHECK(!is_prim_root(BigInt(13), BigInt(101)));
     }
 
     SECTION("mod") {
-        Int a = -5, n = 7;
+        int a = -5, n = 7;
         CHECK(mod(a, n) == a + n);
         a = 5;
         CHECK(mod(a, n) == a % n);
@@ -54,7 +86,7 @@ TEST_CASE("cryptomath.h") {
 
 
 TEST_CASE("Affine cipher") {
-    Int a = 7, b = 2;
+    int a = 7, b = 2;
     string s = "THEQUICKBROWNFOXJUMPEDOVERTHELAZYDOG";
 
     SECTION("Section one") {
@@ -278,14 +310,42 @@ TEST_CASE("Three Rounds Attack") {
         CHECK(k4s.second.find(0b1111) != k4s.second.end());
         CHECK(k4s.second.find(0b0100) != k4s.second.end());
     }
+}
 
-    // SECTION("Random Test") {
-    //     uint16_t key = rand() % (0b1 << 9);
-    //     uint16_t m1 = rand() % (0b1 << 12);
-    //     uint16_t m2 = (rand() & 0b111111000000) | (m1 & 0b111111);
-    //     uint16_t c1 = simpleDES(m1, key, 3);
-    //     uint16_t c2 = simpleDES(m2, key, 3);
-    //
-    //     three_rounds(m1, c1, m2, c2);
-    // }
+
+TEST_CASE("prime generation") {
+    SECTION("get_nth_prime") {
+        CHECK(get_nth_prime(   1) ==    2);
+        CHECK(get_nth_prime(  10) ==   29);
+        CHECK(get_nth_prime( 100) ==  541);
+        CHECK(get_nth_prime(1000) == 7919);
+    }
+
+    SECTION("miller_rabin") {
+        CHECK( miller_rabin(BigInt(2)));
+        CHECK(!miller_rabin(BigInt(4)));
+        CHECK( miller_rabin(BigInt(7477)));
+        CHECK(!miller_rabin(BigInt(1025)));
+        CHECK( miller_rabin(BigInt(472882049)));
+        CHECK(!miller_rabin(BigInt(472882051)));
+        CHECK( miller_rabin(BigInt(491495357)));
+        CHECK(!miller_rabin(BigInt(491495413)));
+        CHECK( miller_rabin(BigInt(961903451)));
+        CHECK(!miller_rabin(BigInt(961903481)));
+    }
+
+    SECTION("random_prime") {
+        NTL::SetSeed(BigInt(time(NULL)));
+        bool flag = true;
+        for ( int i = 0; i < 100; ++i ) {
+            long b = 1 + rand() % 63;
+            LOG("b = %ld", b);
+            BigInt r = random_prime(b);
+            LOG(", random_prime(b) = %ld\n", conv<long>(r));
+            flag = flag && (NTL::power(BigInt(2), b) - 1 <= r);
+            flag = flag && (r <= NTL::power(BigInt(2), b + 1) - 1);
+            flag = flag && is_prime(r);
+        }
+        CHECK(flag);
+    }
 }
