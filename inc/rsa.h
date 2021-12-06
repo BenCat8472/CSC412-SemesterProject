@@ -1,8 +1,9 @@
 #pragma once
-#include <NTL/ZZ.h>
+#include <stdlib.h>
+#include "cryptomath.h"
 
-using namespace NTL;
+constexpr int N_DIGITS = 300;
 
 
-ZZ RSA(ZZ text, ZZ exponent, ZZ modulo);
-void gen_pq(ZZ& p, ZZ& q);
+BigInt RSA(BigInt text, BigInt exponent, BigInt modulo);
+void RSA_key_gen(BigInt& n, BigInt& e, BigInt& d);

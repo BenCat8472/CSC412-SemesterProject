@@ -313,6 +313,12 @@ TEST_CASE("Three Rounds Attack") {
 }
 
 
+/******************************************************************************/
+/*                            Part III Test Cases                             */
+/******************************************************************************/
+#include "rsa.h"
+
+
 TEST_CASE("prime generation") {
     SECTION("get_nth_prime") {
         CHECK(get_nth_prime(   1) ==    2);
@@ -336,16 +342,43 @@ TEST_CASE("prime generation") {
 
     SECTION("random_prime") {
         NTL::SetSeed(BigInt(time(NULL)));
-        bool flag = true;
+        bool passed = true;
         for ( int i = 0; i < 100; ++i ) {
             long b = 1 + rand() % 63;
             LOG("b = %ld", b);
             BigInt r = random_prime(b);
             LOG(", random_prime(b) = %ld\n", conv<long>(r));
-            flag = flag && (NTL::power(BigInt(2), b) - 1 <= r);
-            flag = flag && (r <= NTL::power(BigInt(2), b + 1) - 1);
-            flag = flag && is_prime(r);
+            passed &= (NTL::power(BigInt(2), b) - 1 <= r);
+            passed &= (r <= NTL::power(BigInt(2), b + 1) - 1);
+            passed &= is_prime(r);
         }
-        CHECK(flag);
+        CHECK(passed);
+    }
+}
+
+
+TEST_CASE("RSA") {
+    SECTION("given") {
+        BigInt n, e, d;
+        RSA_key_gen(n, e, d);
+
+        BigInt m(42);
+        BigInt c = RSA(m, e, n);
+        CHECK(RSA(c, d, n) == m);
+    }
+
+    SECTION("random") {
+        srand(time(NULL));
+
+        bool passed = true;
+        for ( int i = 0; i < 16; ++i ) {
+            BigInt n, e, d;
+            RSA_key_gen(n, e, d);
+
+            BigInt m = NTL::RandomBnd(n);
+            BigInt c = RSA(m, e, n);
+            passed &= (RSA(c, d, n) == m);
+        }
+        CHECK(passed);
     }
 }

@@ -84,7 +84,6 @@ BigInt random_prime(long b) {   // generates a prime in range [2^b - 1, 2^(b+1) 
 
     for (;;) {
         BigInt r = b0 + NTL::RandomBnd(b0) - 1;
-        LOG("Checking, %ld, for primality...\n", conv<long>(r));
         if ( miller_rabin(r) ) {
             return r;
         }

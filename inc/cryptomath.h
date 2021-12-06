@@ -15,7 +15,7 @@ using NTL::conv;
 /*                       Template Function Declarations                       */
 /******************************************************************************/
 template<typename Int=int> Int extendedgcd(Int& a, Int& b);
-template<typename Int=int> Int findModInverse(Int a, Int n);
+template<typename Int=int> Int findModInverse(const Int& a, const Int& n);
 template<typename Int=int> Int gcd(Int a, Int b);
 template<typename Int=int> void gcd_shift(Int& curr, Int& next, Int quot);
 template<typename Int=int> bool is_prim_root(Int a, Int n);
@@ -57,7 +57,7 @@ Int extendedgcd(Int& a, Int& b) { // returns gcd(a, b); sets a and b to be x and
 
 
 template<typename Int>
-Int findModInverse(Int a, Int n) {
+Int findModInverse(const Int& a, const Int& n) {
     Int x = a, y = n;
 #ifdef DEBUG
     Int d = extendedgcd(x, y);
