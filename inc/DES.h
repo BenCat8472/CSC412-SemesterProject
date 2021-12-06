@@ -1,6 +1,4 @@
-#ifndef __FULL__64__DES__H__
-#define __FULL__64__DES__H__
-
+#pragma once
 #include <stdint.h>
 #include <vector>
 #include "debug.h"
@@ -139,6 +137,3 @@ constexpr uint8_t KEY_PARITY_TABLE[56] = {
     63, 55, 47, 39, 31, 23, 15,  7, 62, 54, 46, 38, 30, 22,
     14,  6, 61, 53, 45, 37, 29, 21, 13,  5, 28, 20, 12,  4
 };
-
-
-#endif//__FULL__64__DES__H__

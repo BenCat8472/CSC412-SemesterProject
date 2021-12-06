@@ -1,6 +1,4 @@
-#ifndef __ADFGXCIPHER__H__
-#define __ADFGXCIPHER__H__
-
+#pragma once
 #include <map>
 #include "utility.h"
 
@@ -26,6 +24,3 @@ const std::map<const char, const string> ADFGX_E_MAPPING = {
 
 string adfgx_D(const string& key, const string& text);
 string adfgx_E(const string& key, const string& text);
-
-
-#endif//__ADFGXCIPHER__H__

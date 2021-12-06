@@ -1,6 +1,4 @@
-#ifndef __MENU__CLASS__H__
-#define __MENU__CLASS__H__
-
+#pragma once
 #include <iostream>
 #include <string>
 #include <vector>
@@ -26,6 +24,3 @@ public:
     void add(string label, Func);
     bool run();
 };
-
-
-#endif//__MENU__CLASS__H__

@@ -1,6 +1,4 @@
-#ifndef __UTILITY__H__
-#define __UTILITY__H__
-
+#pragma once
 #include <algorithm>
 #include <cctype>
 #include <string>
@@ -27,7 +25,3 @@ int ord(char c);
 Frequencies frequency(string text);
 string to_alphabet(const string& text, const string& alphabet);
 string toupper(const string& s);
-
-
-
-#endif//__UTILITY__H__

@@ -1,4 +1,10 @@
-#include "main.h"
+#include "menu.h"
+#include "part1.h"
+#include "part2.h"
+
+
+bool menu1();
+bool menu2();
 
 
 int main() {

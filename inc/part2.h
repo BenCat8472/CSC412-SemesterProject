@@ -1,6 +1,4 @@
-#ifndef __PART__TWO__FUNCS__H__
-#define __PART__TWO__FUNCS__H__
-
+#pragma once
 #include <iostream>
 #include <limits>
 #include <stdint.h>
@@ -19,6 +17,3 @@ bool full_DES_menu();
 uint16_t get_binary();
 bool simple_DES_menu();
 bool three_rounds_menu();
-
-
-#endif//__PART__TWO__FUNCS__H__

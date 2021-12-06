@@ -1,6 +1,4 @@
-#ifndef __SIMPLE__DES__H__
-#define __SIMPLE__DES__H__
-
+#pragma once
 #include <stdint.h>
 
 typedef uint8_t byte;
@@ -19,6 +17,3 @@ constexpr byte S2[2][8] = {
 uint16_t simpleDES(uint16_t msg, uint16_t key, unsigned rounds);
 byte simple_expand(byte x);
 byte simple_f(byte r, byte k);
-
-
-#endif//__SIMPLE__DES__H__

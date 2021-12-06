@@ -1,6 +1,4 @@
-#ifndef __PART__ONE__FUNCS__H__
-#define __PART__ONE__FUNCS__H__
-
+#pragma once
 #include <stdio.h>
 #include <iostream>
 #include <limits>
@@ -23,6 +21,3 @@ bool affine_menu();
 bool frequency_menu();
 bool vigenere_attack();
 bool vigenere_menu();
-
-
-#endif//__PART__ONE__FUNCS__H__

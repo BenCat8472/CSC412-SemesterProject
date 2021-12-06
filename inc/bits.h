@@ -1,6 +1,4 @@
-#ifndef __BITS__PRINTING__METHODS__H__
-#define __BITS__PRINTING__METHODS__H__
-
+#pragma once
 #include <iostream>
 
 using std::cout;
@@ -17,6 +15,3 @@ struct Bits {
 
 
 ostream& operator<<(ostream& o, Bits bits);
-
-
-#endif//__BITS__PRINTING__METHODS__H__
