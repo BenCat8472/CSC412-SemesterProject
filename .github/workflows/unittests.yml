@@ -17,7 +17,7 @@ jobs:
             cd ntl-11.5.1/src
             ./configure
             make
-            make install
+            sudo make install
         - name: make and run unittests
           run: |
             make unittests
