@@ -9,6 +9,15 @@ jobs:
         runs-on: ubuntu-latest
         steps:
         - uses: actions/checkout@v2
+        - name: install NTL library
+          run: |
+            wget https://libntl.org/ntl-11.5.1.tar.gz
+            gunzip ntl-11.5.1.tar.gz
+            tar xf ntl-11.5.1.tar
+            cd ntl-11.5.1/src
+            ./configure
+            make
+            make install
         - name: make and run unittests
           run: |
             make unittests
