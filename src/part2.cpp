@@ -29,7 +29,11 @@ bool full_DES_menu() {
     fputs("Enter the key: ", stdout);
     cin >> hex >> key;
 
+#ifdef __unix__
     printf("DES(0x%016lx, 0x%016lx) == 0x%016lx\n", msg, key, DES(msg, key));
+#else
+    printf("DES(0x%016llx, 0x%016llx) == 0x%016llx\n", msg, key, DES(msg, key));
+#endif
 
     return true;
 }
