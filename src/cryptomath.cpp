@@ -43,9 +43,9 @@ bool miller_rabin(const BigInt& n) {
 
 
 bool miller_rabin(const BigInt& n, const BigInt& r, const BigInt& d) {
-    LOG("+miller_rabin(%ld, %ld, %ld)\n", conv<long>(n), conv<long>(r), conv<long>(d));
+    // LOG("+miller_rabin(%ld, %ld, %ld)\n", conv<long>(n), conv<long>(r), conv<long>(d));
     if ( (n <= 1) || ((n % 2 == 0) && (n != 2)) ) {
-        LOG("-miller_rabin -> false\n");
+        // LOG("-miller_rabin -> false\n");
         return false;
     }
 
@@ -55,7 +55,7 @@ bool miller_rabin(const BigInt& n, const BigInt& r, const BigInt& d) {
         bounds = n - 2;
     }
 
-    LOG("Bounds: 2 <= a <= %ld, where a is prime.\n", conv<long>(bounds));
+    // LOG("Bounds: 2 <= a <= %ld, where a is prime.\n", conv<long>(bounds));
     BigInt a;
     for ( unsigned long long i = 1; (a = get_nth_prime(i)) <= bounds; ++i ) {
         BigInt x = NTL::PowerMod(a, d, n);
@@ -66,14 +66,14 @@ bool miller_rabin(const BigInt& n, const BigInt& r, const BigInt& d) {
             }
 
             if ( x != n - 1 ) {
-                LOG("Witness found: a = %ld\n", conv<long>(a));
-                LOG("-miller_rabin -> false\n");
+                // LOG("Witness found: a = %ld\n", conv<long>(a));
+                // LOG("-miller_rabin -> false\n");
                 return false;
             }
         }
     }
 
-    LOG("-miller_rabin -> true\n");
+    // LOG("-miller_rabin -> true\n");
     return true;
 }
 

@@ -61,13 +61,15 @@ Int findModInverse(const Int& a, const Int& n) {
     Int x = a, y = n;
 #ifdef DEBUG
     Int d = extendedgcd(x, y);
-    if ( d != 1 )
+    if ( d != 1 ) {
         throw "'a' and 'n' are not relatively prime so a^-1 DNE!";
+    }
 #else
     extendedgcd(x, y);
 #endif
-    while ( x < 0 )
+    while ( x < 0 ) {
         x += n;
+    }
     return x;
 }
 

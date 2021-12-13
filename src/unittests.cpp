@@ -316,15 +316,81 @@ TEST_CASE("Three Rounds Attack") {
 /******************************************************************************/
 /*                            Part III Test Cases                             */
 /******************************************************************************/
+#include "factoring.h"
 #include "rsa.h"
+
+
+TEST_CASE("factoring") {
+    const vector<BigInt> composites = {
+        BigInt(2 * 3), BigInt(17 * 41), BigInt(709 * 719), BigInt(7333 * 7333),
+        BigInt(2 * 7919), BigInt(2003 * 4001) * BigInt(6007 * 8009)
+    };
+
+    SECTION("Fermat's method") {
+        std::cerr << "Fermat's method:" << std::endl;
+        bool failed = false;
+        for ( const BigInt& n : composites ) {
+            BigInt p = factor_Fermats_method(n);
+            BigInt q = n / p;
+            std::cerr << n << " = " << p << " * " << q << std::endl;
+            if ( p * q != n ) {
+                failed = true;
+            }
+        }
+        CHECK(!failed);
+    }
+
+    SECTION("Pollard's rho") {
+        std::cerr << "Pollard's rho:" << std::endl;
+        bool failed = false;
+        for ( const BigInt& n : composites ) {
+            BigInt p = factor_Pollard_rho(n);
+            BigInt q = n / p;
+            std::cerr << n << " = " << p << " * " << q << std::endl;
+            if ( p * q != n ) {
+                failed = true;
+            }
+        }
+        CHECK(!failed);
+    }
+
+    SECTION("Pollard's p-1") {
+        std::cerr << "Pollard's p-1:" << std::endl;
+        bool failed = false;
+        for ( const BigInt& n : composites ) {
+            BigInt p = factor_Pollard_p_minus_one(n);
+            BigInt q = n / p;
+            std::cerr << n << " = " << p << " * " << q << std::endl;
+            if ( p * q != n ) {
+                failed = true;
+            }
+        }
+        CHECK(!failed);
+    }
+
+    SECTION("Shank's Square Forms") {
+        std::cerr << "Shank's Square Forms:" << std::endl;
+        bool failed = false;
+        for ( const BigInt& n : composites ) {
+            BigInt p = factor_Shanks(n);
+            BigInt q = n / p;
+            std::cerr << n << " = " << p << " * " << q << std::endl;
+            if ( p * q != n ) {
+                failed = true;
+            }
+        }
+        CHECK(!failed);
+    }
+}
 
 
 TEST_CASE("prime generation") {
     SECTION("get_nth_prime") {
-        CHECK(get_nth_prime(   1) ==    2);
-        CHECK(get_nth_prime(  10) ==   29);
-        CHECK(get_nth_prime( 100) ==  541);
-        CHECK(get_nth_prime(1000) == 7919);
+        CHECK(get_nth_prime(    1) ==      2);
+        CHECK(get_nth_prime(   10) ==     29);
+        CHECK(get_nth_prime(  100) ==    541);
+        CHECK(get_nth_prime( 1000) ==   7919);
+        CHECK(get_nth_prime(10000) == 104729);
     }
 
     SECTION("miller_rabin") {
@@ -345,12 +411,13 @@ TEST_CASE("prime generation") {
         bool passed = true;
         for ( int i = 0; i < 100; ++i ) {
             long b = 1 + rand() % 63;
-            LOG("b = %ld", b);
             BigInt r = random_prime(b);
-            LOG(", random_prime(b) = %ld\n", conv<long>(r));
-            passed &= (NTL::power(BigInt(2), b) - 1 <= r);
-            passed &= (r <= NTL::power(BigInt(2), b + 1) - 1);
-            passed &= is_prime(r);
+
+            if ( !(NTL::power(BigInt(2), b) - 1 <= r) ||
+                 !(r <= NTL::power(BigInt(2), b + 1) - 1) ||
+                 !is_prime(r) ) {
+                passed = false;
+            }
         }
         CHECK(passed);
     }
