@@ -49,12 +49,15 @@ static BigInt Pollard_g(const BigInt& x, const BigInt& n) {
 
 
 BigInt factor_Pollard_rho(const BigInt& n) {
-    BigInt x(2), y(2), d(1);
+    BigInt d(1);
 
-    while ( d == 1 ) {
-        x = Pollard_g(x, n);
-        y = Pollard_g(Pollard_g(y, n), n);
-        d = gcd(abs(x - y), n);
+    for ( int i = 2; d == 1 || d == n; ++i ) {
+        BigInt x(i), y(i);
+        do {
+            x = Pollard_g(x, n);
+            y = Pollard_g(Pollard_g(y, n), n);
+            d = gcd(abs(x - y), n);
+        } while ( d == 1 );
     }
 
     return d;
